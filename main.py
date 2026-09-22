@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
+# DADOS DA LOJA
 WHATSAPP = "5598984098706"
 SENHA_ADMIN = "lima1234"
 
