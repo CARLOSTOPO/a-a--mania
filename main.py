@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 app = FastAPI()
 
 WHATSAPP = "5598984098706"
-SENHA_ADMIN = "tilico1234"
+SENHA_ADMIN = "lima1234"
 
 HTML = """
 <!DOCTYPE html>
@@ -28,12 +28,13 @@ header{background:linear-gradient(135deg,#9333ea,#7e22ce);padding:20px 15px}
 .fechado{background:#ef4444}
 .btn-adm{background:#f472b6;border:none;color:#fff;padding:7px 14px;border-radius:20px;font-weight:bold;cursor:pointer}
 .container{max-width:1000px;margin:25px auto;padding:0 15px}
-h2{font-size:1.4rem;color:#e9d5ff;margin-bottom:5px}
-.sub{color:#a78bfa;margin-bottom:25px;font-size:.9rem}
+h2{font-size:1.4rem;color:#e9d5ff;margin-bottom:5px;margin-top:40px}
+.sub{color:#a78bfa;margin-bottom:10px;font-size:.9rem}
+.aviso{color:#c4b5fd;font-style:italic;font-size:.85rem;margin-bottom:25px;text-align:center}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
 .card{background:linear-gradient(145deg,#312e81,#4c1d95);border-radius:14px;padding:18px}
 .tipo{display:inline-block;background:rgba(255,255,255,.2);padding:3px 10px;border-radius:10px;font-size:.7rem;font-weight:bold;margin-bottom:10px}
-.foto{width:100%;height:140px;object-fit:cover;border-radius:10px;margin-bottom:12px;background:#2d264a}
+.foto{width:100%;height:140px;object-fit:cover;border-radius:10px;margin-bottom:12px}
 .card h3{font-size:1rem;margin-bottom:4px}
 .card p{color:#d8b4fe;font-size:.8rem;margin-bottom:12px}
 .foot{display:flex;justify-content:space-between;align-items:center}
@@ -69,6 +70,12 @@ input[type=text], select{width:100%;padding:10px;border-radius:8px;border:2px so
 .btns{display:flex;gap:10px;margin-top:15px}
 .btn-canc{flex:1;padding:12px;border:none;border-radius:8px;background:#ef4444;color:#fff;font-weight:bold;cursor:pointer}
 .btn-env{flex:1;padding:12px;border:none;border-radius:8px;background:#22c55e;color:#fff;font-weight:bold;cursor:pointer}
+.grid-acomp{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:15px}
+.item-acomp{background:#1e1b4b;padding:10px;border-radius:8px;text-align:center;font-size:.9rem}
+.grid-cremes{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin-top:15px}
+.item-creme{background:#1e1b4b;padding:15px;border-radius:10px;text-align:center}
+.valor-creme{color:#fcd34d;font-weight:bold;margin-top:5px}
+.creme-checkbox{margin-top:10px}
 </style>
 </head>
 <body>
@@ -90,7 +97,17 @@ input[type=text], select{width:100%;padding:10px;border-radius:8px;border:2px so
 <div class="container">
   <h2>Nosso Cardápio</h2>
   <p class="sub">Monte seu pedido do seu jeito, sem taxas extras!</p>
+  <p class="aviso">📸 *Imagens meramente ilustrativas. Você é quem monta seu açaí do jeitinho que quiser!*</p>
   <div class="grid" id="cardapio"></div>
+
+  <h2>🍬 Acompanhamentos Disponíveis</h2>
+  <p class="sub">Inclusos no seu copo, de acordo com a quantidade escolhida:</p>
+  <div class="grid-acomp" id="lista-acompanhamenos"></div>
+
+  <h2>🍫 Cremes Adicionais</h2>
+  <p class="sub">Acrescente ao seu pedido — R$ 4,00 cada:</p>
+  <div class="grid-cremes" id="lista-cremes"></div>
+
   <div class="painel" id="painel">
     <div class="head-adm">
       <h3>⚙️ Painel de Controle</h3>
@@ -121,6 +138,9 @@ input[type=text], select{width:100%;padding:10px;border-radius:8px;border:2px so
     
     <label class="block">Escolha os acompanhamentos:</label>
     <div class="grupo" id="m-ingred"></div>
+
+    <label class="block">Adicionar Cremes (opcional):</label>
+    <div class="grupo creme-checkbox" id="m-cremes"></div>
     
     <label class="block">Seu Nome Completo:</label>
     <input type="text" id="m-nome" placeholder="Ex: João da Silva">
@@ -150,29 +170,38 @@ const ZAP = "ZAP_AQUI";
 let lojaAberta = true;
 let prodSel = null;
 let selecionados = new Set();
+let cremesSel = new Set();
+
 const produtos = [
-  {id:1,nome:"Copo Açaí 250ml",tipo:"Copo",preco:10.00,limite:2,desc:"2 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1515823064-d6e0c04616f7?w=400&h=300&fit=crop",ativo:true},
-  {id:2,nome:"Copo Açaí 350ml",tipo:"Copo",preco:12.00,limite:4,desc:"4 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=400&h=300&fit=crop",ativo:true},
-  {id:3,nome:"Copo Açaí de 400ml",tipo:"Copo",preco:15.00,limite:5,desc:"5 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1551024601-bec78aea7465?w=400&h=300&fit=crop",ativo:true},
-  {id:4,nome:"Copo Açaí 770ml",tipo:"Copo",preco:25.00,limite:7,desc:"7 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",ativo:true},
-  {id:5,nome:"Combo Supremo",tipo:"Combo",preco:45.00,limite:4,desc:"4 copos de 350ml, 4 acompanhamentos em cada",img:"https://images.unsplash.com/photo-1498837167922-ddd6d2a99011?w=400&h=300&fit=crop",ativo:true},
-  {id:6,nome:"Combo Mania",tipo:"Combo",preco:42.00,limite:5,desc:"3 copos de 400ml, 5 acompanhamentos em cada",img:"https://images.unsplash.com/photo-1496116218417-01d66f038a40?w=400&h=300&fit=crop",ativo:true}
+  {id:1,nome:"Copo Açaí 250ml",tipo:"Copo",preco:10.00,limite:2,desc:"2 acompanhamentos inclusos",img:"https://p3-flow-image-sign.byteimg.com/tos-cn-i-vig93e2r3a/76fd~tplv-tt-origin.image",ativo:true},
+  {id:2,nome:"Copo Açaí 350ml",tipo:"Copo",preco:12.00,limite:4,desc:"4 acompanhamentos inclusos",img:"https://p3-flow-image-sign.byteimg.com/tos-cn-i-vig93e2r3a/79ad~tplv-tt-origin.image",ativo:true},
+  {id:3,nome:"Copo Açaí de 400ml",tipo:"Copo",preco:15.00,limite:5,desc:"5 acompanhamentos inclusos",img:"https://p3-flow-image-sign.byteimg.com/tos-cn-i-vig93e2r3a/518d~tplv-tt-origin.image",ativo:true},
+  {id:4,nome:"Copo Açaí 770ml",tipo:"Copo",preco:25.00,limite:7,desc:"7 acompanhamentos inclusos",img:"https://p3-flow-image-sign.byteimg.com/tos-cn-i-vig93e2r3a/2785~tplv-tt-origin.image",ativo:true},
+  {id:5,nome:"Combo Supremo",tipo:"Combo",preco:45.00,limite:4,desc:"4 copos de 350ml, 4 acompanhamentos em cada",img:"https://p3-flow-image-sign.byteimg.com/tos-cn-i-vig93e2r3a/05d8~tplv-tt-origin.image",ativo:true},
+  {id:6,nome:"Combo Mania",tipo:"Combo",preco:42.00,limite:5,desc:"3 copos de 400ml, 5 acompanhamentos em cada",img:"https://p3-flow-image-sign.byteimg.com/tos-cn-i-vig93e2r3a/1a96~tplv-tt-origin.image",ativo:true}
 ];
-const ingredientes = [
-  {nome:"Leite Condensado",ativo:true},
-  {nome:"Leite em Pó",ativo:true},
+
+const acompanhamentos = [
+  {nome:"Amendoim",ativo:true},
   {nome:"Paçoca",ativo:true},
   {nome:"Granola",ativo:true},
-  {nome:"Flocos de Arroz",ativo:true},
-  {nome:"Creme de Cupuaçu",ativo:true},
+  {nome:"Tapioca",ativo:true},
+  {nome:"Cereal Crocante",ativo:true},
+  {nome:"Sucrilhos",ativo:true},
+  {nome:"Disquete",ativo:true},
   {nome:"Banana",ativo:true},
+  {nome:"Uva",ativo:true},
   {nome:"Morango",ativo:true},
-  {nome:"Chantilly",ativo:true},
-  {nome:"Leite Ninho",ativo:true},
-  {nome:"Ovomaltine",ativo:true},
-  {nome:"Chocobom",ativo:true},
-  {nome:"Gotas de Chocolate",ativo:true}
+  {nome:"Leite em Pó",ativo:true},
+  {nome:"Bis",ativo:true},
+  {nome:"Jujuba",ativo:true}
 ];
+
+const cremes = [
+  {nome:"Creme de Nutella",valor:4.00,ativo:true},
+  {nome:"Creme de Ninho",valor:4.00,ativo:true}
+];
+
 function render(){
   const grid = document.getElementById("cardapio");
   grid.innerHTML = "";
@@ -193,6 +222,19 @@ function render(){
     `;
     grid.appendChild(card);
   });
+
+  const ac = document.getElementById("lista-acompanhamenos");
+  ac.innerHTML = "";
+  acompanhamentos.filter(a=>a.ativo).forEach(a=>{
+    ac.innerHTML += `<div class="item-acomp">✅ ${a.nome}</div>`;
+  });
+
+  const cr = document.getElementById("lista-cremes");
+  cr.innerHTML = "";
+  cremes.filter(c=>c.ativo).forEach(c=>{
+    cr.innerHTML += `<div class="item-creme"><strong>${c.nome}</strong><div class="valor-creme">R$ ${c.valor.toFixed(2).replace('.',',')}</div></div>`;
+  });
+
   const lp = document.getElementById("lista-prod");
   lp.innerHTML = "";
   produtos.forEach((p,i)=>{
@@ -200,13 +242,15 @@ function render(){
     lbl.innerHTML = `<input type="checkbox" ${p.ativo?'checked':''} onchange="toggleProd(${i})"> ${p.nome}`;
     lp.appendChild(lbl);
   });
+
   const li = document.getElementById("lista-ing");
   li.innerHTML = "";
-  ingredientes.forEach((ig,i)=>{
+  acompanhamentos.forEach((ig,i)=>{
     const lbl = document.createElement("label");
     lbl.innerHTML = `<input type="checkbox" ${ig.ativo?'checked':''} onchange="toggleIng(${i})"> ${ig.nome}`;
     li.appendChild(lbl);
   });
+
   const el = document.getElementById("sts");
   if(lojaAberta){
     el.className = "status aberto";
@@ -220,6 +264,7 @@ function render(){
     document.getElementById("botao-fechar").classList.add("btn-ativo");
   }
 }
+
 function loginAdm(){
   const s = prompt("Senha do Administrador:");
   if(s===SENHA){
@@ -228,24 +273,31 @@ function loginAdm(){
     alert("Senha incorreta!");
   }
 }
+
 function fecharPainel(){
   document.getElementById("painel").classList.remove("mostrar");
 }
+
 function mudarLoja(abrir){
   lojaAberta = abrir;
   render();
 }
+
 function toggleProd(i){
   produtos[i].ativo = !produtos[i].ativo;
   render();
 }
+
 function toggleIng(i){
-  ingredientes[i].ativo = !ingredientes[i].ativo;
+  acompanhamentos[i].ativo = !acompanhamentos[i].ativo;
+  render();
 }
+
 function abreModal(id){
   if(!lojaAberta){alert("A loja está fechada no momento!");return;}
   prodSel = produtos.find(x=>x.id===id);
   selecionados.clear();
+  cremesSel.clear();
   
   document.getElementById("m-titulo").textContent = `${prodSel.nome} - R$ ${prodSel.preco.toFixed(2).replace('.',',')}`;
   document.getElementById("m-sub").textContent = prodSel.desc;
@@ -253,11 +305,21 @@ function abreModal(id){
   
   const cont = document.getElementById("m-ingred");
   cont.innerHTML = "";
-  ingredientes.filter(x=>x.ativo).forEach(ig=>{
+  acompanhamentos.filter(x=>x.ativo).forEach(ig=>{
     const lbl = document.createElement("label");
     lbl.dataset.nome = ig.nome;
     lbl.innerHTML = `<input type="checkbox" value="${ig.nome}" onchange="atualizarContagem(this, '${ig.nome}')"> ${ig.nome}`;
     cont.appendChild(lbl);
+  });
+
+  const contCr = document.getElementById("m-cremes");
+  contCr.innerHTML = "";
+  cremes.filter(x=>x.ativo).forEach(cr=>{
+    const lbl = document.createElement("label");
+    lbl.dataset.nome = cr.nome;
+    lbl.dataset.valor = cr.valor;
+    lbl.innerHTML = `<input type="checkbox" value="${cr.nome}" data-valor="${cr.valor}" onchange="alternarCreme(this, '${cr.nome}')"> ${cr.nome} - R$ ${cr.valor.toFixed(2).replace('.',',')}`;
+    contCr.appendChild(lbl);
   });
   
   document.getElementById("modal").classList.add("aberto");
@@ -266,6 +328,7 @@ function abreModal(id){
   document.getElementById("m-regiao").value = "";
   document.getElementById("m-pagamento").value = "Dinheiro";
 }
+
 function atualizarContagem(checkbox, nome){
   if(checkbox.checked){
     if(selecionados.size >= prodSel.limite){
@@ -279,6 +342,15 @@ function atualizarContagem(checkbox, nome){
   }
   atualizarBotoesIngredientes();
 }
+
+function alternarCreme(checkbox, nome){
+  if(checkbox.checked){
+    cremesSel.add(nome);
+  }else{
+    cremesSel.delete(nome);
+  }
+}
+
 function atualizarBotoesIngredientes(){
   const labels = document.querySelectorAll("#m-ingred label");
   labels.forEach(lbl=>{
@@ -292,11 +364,14 @@ function atualizarBotoesIngredientes(){
     }
   });
 }
+
 function fecharModal(){
   document.getElementById("modal").classList.remove("aberto");
   prodSel = null;
   selecionados.clear();
+  cremesSel.clear();
 }
+
 function enviar(){
   const nome = document.getElementById("m-nome").value.trim();
   const endereco = document.getElementById("m-endereco").value.trim();
@@ -312,20 +387,31 @@ function enviar(){
     alert(`Você pode escolher no máximo ${prodSel.limite} acompanhamento(s)!`);
     return;
   }
+
+  let totalAdicional = cremesSel.size * 4.00;
+  let valorTotal = prodSel.preco + totalAdicional;
+
+  let textoCremes = cremesSel.size > 0 
+    ? `🍫 Cremes: ${Array.from(cremesSel).join(", ")} (+ R$ ${totalAdicional.toFixed(2).replace('.',',')})\\n` 
+    : "";
+
   const texto = encodeURIComponent(
-    "🍇 *NOVO PEDIDO - AÇAÍ MANIA*%0A%0A" +
-    "📦 *Produto:* " + prodSel.nome + "%0A" +
-    "💰 *Valor:* R$ " + prodSel.preco.toFixed(2).replace('.',',') + "%0A" +
-    "🥣 *Acompanhamentos:* " + (selecionados.size > 0 ? Array.from(selecionados).join(", ") : "Nenhum") + "%0A%0A" +
-    "👤 *Cliente:* " + nome + "%0A" +
-    "📍 *Endereço:* " + endereco + "%0A" +
-    "🗺️ *Região:* " + (regiao || "Não informada") + "%0A" +
-    "💳 *Pagamento:* " + pagamento
+    `🍇 *NOVO PEDIDO - AÇAÍ MANIA*\\n\\n` +
+    `📦 *Produto:* ${prodSel.nome}\\n` +
+    `💰 *Valor do produto:* R$ ${prodSel.preco.toFixed(2).replace('.',',')}\\n` +
+    (textoCremes ? textoCremes : "") +
+    `💵 *Valor Total:* R$ ${valorTotal.toFixed(2).replace('.',',')}\\n\\n` +
+    `🥣 *Acompanhamentos:* ${selecionados.size > 0 ? Array.from(selecionados).join(", ") : "Nenhum"}\\n\\n` +
+    `👤 *Cliente:* ${nome}\\n` +
+    `📍 *Endereço:* ${endereco}\\n` +
+    `🗺️ *Região:* ${regiao || "Não informada"}\\n` +
+    `💳 *Pagamento:* ${pagamento}`
   );
   
-  window.open("https://wa.me/" + ZAP + "?text=" + texto, "_blank");
+  window.open(`https://wa.me/${ZAP}?text=${texto}`, "_blank");
   fecharModal();
 }
+
 render();
 </script>
 </body>
