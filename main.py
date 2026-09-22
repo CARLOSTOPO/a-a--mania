@@ -7,7 +7,7 @@ WHATSAPP = "5598984098706"
 SENHA_ADMIN = "lima1234"
 
 # ==============================================
-# 🔗 TODAS AS IMAGENS JÁ PREENCHIDAS
+# ✅ LINKS QUE VOCÊ ENVIOU — TUDO AQUI
 # ==============================================
 IMAGENS = {
     "logo": "https://i.ibb.co/HTtLGq7q/logo.jpg",
@@ -179,8 +179,8 @@ input[type=text], select{{width:100%;padding:10px;border-radius:8px;border:2px s
   </div>
 </div>
 <script>
-const SENHA = "SENHA_AQUI";
-const ZAP = "ZAP_AQUI";
+const SENHA = "{SENHA_ADMIN}";
+const ZAP = "{WHATSAPP}";
 let lojaAberta = true;
 let prodSel = null;
 let selecionados = new Set();
@@ -233,7 +233,7 @@ function render(){{
     card.className = "card";
     card.innerHTML = `
       <span class="tipo">${{p.tipo}}</span>
-      <img src="${{p.img}}" alt="${{p.nome}}" class="foto" loading="lazy" onerror="this.style.display='none'">
+      <img src="${{p.img}}" alt="${{p.nome}}" class="foto" loading="lazy">
       <h3>${{p.nome}}</h3>
       <p>${{p.desc}}</p>
       <div class="foot">
@@ -330,7 +330,6 @@ function abreModal(id){{
   cont.innerHTML = "";
   acompanhamentos.filter(x=>x.ativo).forEach(ig=>{{
     const lbl = document.createElement("label");
-    lbl.dataset.nome = ig.nome;
     lbl.innerHTML = `<input type="checkbox" value="${{ig.nome}}" onchange="atualizarContagem(this, '${{ig.nome}}')"> ${{ig.nome}}`;
     cont.appendChild(lbl);
   }});
@@ -339,9 +338,7 @@ function abreModal(id){{
   contCr.innerHTML = "";
   cremes.filter(x=>x.ativo).forEach(cr=>{{
     const lbl = document.createElement("label");
-    lbl.dataset.nome = cr.nome;
-    lbl.dataset.valor = cr.valor;
-    lbl.innerHTML = `<input type="checkbox" value="${{cr.nome}}" data-valor="${{cr.valor}}" onchange="alternarCreme(this, '${{cr.nome}}')"> ${{cr.nome}} - R$ ${{cr.valor.toFixed(2).replace('.',',')}}`;
+    lbl.innerHTML = `<input type="checkbox" value="${{cr.nome}}" onchange="alternarCreme(this, '${{cr.nome}}')"> ${{cr.nome}} - R$ ${{cr.valor.toFixed(2).replace('.',',')}}`;
     contCr.appendChild(lbl);
   }});
   
@@ -363,29 +360,11 @@ function atualizarContagem(checkbox, nome){{
   }}else{{
     selecionados.delete(nome);
   }}
-  atualizarBotoesIngredientes();
 }}
 
 function alternarCreme(checkbox, nome){{
-  if(checkbox.checked){{
-    cremesSel.add(nome);
-  }}else{{
-    cremesSel.delete(nome);
-  }}
-}}
-
-function atualizarBotoesIngredientes(){{
-  const labels = document.querySelectorAll("#m-ingred label");
-  labels.forEach(lbl=>{{
-    const cb = lbl.querySelector("input");
-    if(!cb.checked && selecionados.size >= prodSel.limite){{
-      lbl.classList.add("desativado");
-      cb.disabled = true;
-    }}else{{
-      lbl.classList.remove("desativado");
-      cb.disabled = false;
-    }}
-  }});
+  if(checkbox.checked) cremesSel.add(nome);
+  else cremesSel.delete(nome);
 }}
 
 function fecharModal(){{
@@ -401,37 +380,32 @@ function enviar(){{
   const regiao = document.getElementById("m-regiao").value.trim();
   const pagamento = document.getElementById("m-pagamento").value;
   
-  if(!nome || !endereco){{
-    alert("Preencha Nome e Endereço!");
-    return;
-  }}
+  if(!nome || !endereco){{ alert("Preencha Nome e Endereço!"); return; }}
   
   if(selecionados.size > prodSel.limite){{
-    alert(`Você pode escolher no máximo ${{prodSel.limite}} acompanhamento(s)!`);
+    alert(`Máximo de ${{prodSel.limite}} acompanhamento(s)!`);
     return;
   }}
 
-  let totalAdicional = cremesSel.size * 4.00;
-  let valorTotal = prodSel.preco + totalAdicional;
+  const totalAdicional = cremesSel.size * 4.00;
+  const valorTotal = prodSel.preco + totalAdicional;
+  const textoCremes = cremesSel.size > 0 
+    ? `🍫 Cremes: ${{[...cremesSel].join(", ")}} (+ R$ ${{totalAdicional.toFixed(2).replace('.',',')}})\\n` : "";
 
-  let textoCremes = cremesSel.size > 0 
-    ? `🍫 Cremes: ${{Array.from(cremesSel).join(", ")}} (+ R$ ${{totalAdicional.toFixed(2).replace('.',',')}})\\n` 
-    : "";
-
-  const texto = encodeURIComponent(
+  const mensagem = encodeURIComponent(
     `🍇 *NOVO PEDIDO - AÇAÍ MANIA*\\n\\n` +
     `📦 *Produto:* ${{prodSel.nome}}\\n` +
-    `💰 *Valor do produto:* R$ ${{prodSel.preco.toFixed(2).replace('.',',')}}\\n` +
-    (textoCremes ? textoCremes : "") +
-    `💵 *Valor Total:* R$ ${{valorTotal.toFixed(2).replace('.',',')}}\\n\\n` +
-    `🥣 *Acompanhamentos:* ${{selecionados.size > 0 ? Array.from(selecionados).join(", ") : "Nenhum"}}\\n\\n` +
+    `💰 *Valor:* R$ ${{prodSel.preco.toFixed(2).replace('.',',')}}\\n` +
+    textoCremes +
+    `💵 *Total:* R$ ${{valorTotal.toFixed(2).replace('.',',')}}\\n\\n` +
+    `🥣 *Acompanhamentos:* ${{[...selecionados].join(", ") || "Nenhum"}}\\n\\n` +
     `👤 *Cliente:* ${{nome}}\\n` +
     `📍 *Endereço:* ${{endereco}}\\n` +
     `🗺️ *Região:* ${{regiao || "Não informada"}}\\n` +
     `💳 *Pagamento:* ${{pagamento}}`
   );
   
-  window.open(`https://wa.me/${ZAP}?text=${{texto}}`, "_blank");
+  window.open(`https://wa.me/${ZAP}?text=${mensagem}`, "_blank");
   fecharModal();
 }}
 
@@ -441,8 +415,8 @@ render();
 </html>
 """
 
-HTML = HTML.replace("SENHA_AQUI", SENHA_ADMIN)
-HTML = HTML.replace("ZAP_AQUI", WHATSAPP)
+HTML = HTML.replace("{SENHA_ADMIN}", SENHA_ADMIN)
+HTML = HTML.replace("{WHATSAPP}", WHATSAPP)
 
 @app.get("/", response_class=HTMLResponse)
 def principal():
