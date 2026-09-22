@@ -1,266 +1,369 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
-from typing import List
 
-app = FastAPI(title="Açaí Mania Delivery Gratuito")
+app = FastAPI()
 
-# Dados do cardápio extraídos da plataforma
-PRODUCTS = [
-    {
-        "id": 1,
-        "name": "Copo Açaí 250 ml",
-        "price": 10.00,
-        "description": "2 acompanhamentos inclusos",
-        "max_acomp": 2,
-        "category": "Copo"
-    },
-    {
-        "id": 2,
-        "name": "Copo Açaí 350ml",
-        "price": 12.00,
-        "description": "4 acompanhamentos inclusos",
-        "max_acomp": 4,
-        "category": "Copo"
-    },
-    {
-        "id": 3,
-        "name": "Copo Açaí de 400ml",
-        "price": 15.00,
-        "description": "5 acompanhamentos inclusos",
-        "max_acomp": 5,
-        "category": "Copo"
-    },
-    {
-        "id": 4,
-        "name": "Copo Açaí 770ml",
-        "price": 25.00,
-        "description": "7 acompanhamentos inclusos",
-        "max_acomp": 7,
-        "category": "Copo"
-    },
-    {
-        "id": 5,
-        "name": "Combo Supremo",
-        "price": 45.00,
-        "description": "4 copos de Açaí de 350 ml, com 4 acompanhamentos em cada.",
-        "max_acomp": 4,
-        "category": "Combo"
-    },
-    {
-        "id": 6,
-        "name": "Combo Mania",
-        "price": 42.00,
-        "description": "3 copos de 400 ml cada, com 5 acompanhamentos em cada.",
-        "max_acomp": 5,
-        "category": "Combo"
-    }
-]
+WHATSAPP = "5598984098706"
+SENHA_ADMIN = "123"
 
-# Acompanhamentos comuns (você pode customizar os adicionais do seu irmão aqui)
-ACCOMPANIMENTS = [
-    "Leite Condensado", "Leite Ninho", "Paçoca", "Granola", 
-    "Flocos de Arroz", "Ovomaltine", "Chocobom", "Morango", 
-    "Banana", "Creme de Cupuaçu", "Gotas de Chocolate"
-]
-
-class OrderItem(BaseModel):
-    product_name: str
-    price: float
-    selected_acomp: List[str]
-    client_name: str
-    address: str
-    neighborhood: str
-    payment_method: str
-    change_for: str = ""
-
-@app.get("/api/menu")
-def get_menu():
-    return {
-        "store": "Açaí Mania",
-        "address": "Projetada, 31 - Kiola Sarney",
-        "products": PRODUCTS,
-        "accompaniments": ACCOMPANIMENTS
-    }
-
-@app.get("/", response_class=HTMLResponse)
-def read_root():
-    return HTML_CONTENT
-
-# HTML incorporado para facilitar rodar direto com uvicorn main:app --reload
-HTML_CONTENT = """
+HTML = """
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Açaí Mania - Cardápio Digital</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Açaí Mania</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#0b0914;color:#fff}
+
+header{background:linear-gradient(135deg,#9333ea,#7e22ce);padding:20px 15px}
+.cab{max-width:1000px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}
+.esq{display:flex;align-items:center;gap:12px}
+.logo{background:#fff;color:#9333ea;width:45px;height:45px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold}
+.tit h1{font-size:1.2rem}
+.tit p{color:#e9d5ff;font-size:.8rem}
+.dir{display:flex;gap:10px;align-items:center}
+.status{padding:6px 14px;border-radius:20px;font-weight:bold;font-size:.85rem}
+.aberto{background:#22c55e}
+.fechado{background:#ef4444}
+.btn-adm{background:#f472b6;border:none;color:#fff;padding:7px 14px;border-radius:20px;font-weight:bold;cursor:pointer}
+
+.container{max-width:1000px;margin:25px auto;padding:0 15px}
+h2{font-size:1.4rem;color:#e9d5ff;margin-bottom:5px}
+.sub{color:#a78bfa;margin-bottom:25px;font-size:.9rem}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.card{background:linear-gradient(145deg,#312e81,#4c1d95);border-radius:14px;padding:18px}
+.tipo{display:inline-block;background:rgba(255,255,255,.2);padding:3px 10px;border-radius:10px;font-size:.7rem;font-weight:bold;margin-bottom:10px}
+.foto{width:100%;height:140px;object-fit:cover;border-radius:10px;margin-bottom:12px}
+.card h3{font-size:1rem;margin-bottom:4px}
+.card p{color:#d8b4fe;font-size:.8rem;margin-bottom:12px}
+.foot{display:flex;justify-content:space-between;align-items:center}
+.preco{font-weight:bold;color:#86efac;font-size:1.1rem}
+.btn-montar{background:#f472b6;border:none;color:#fff;padding:8px 18px;border-radius:8px;font-weight:bold;cursor:pointer}
+.btn-montar:disabled{background:#555;cursor:not-allowed;opacity:.6}
+
+.painel{display:none;margin-top:35px;background:#1e1b4b;border:3px solid#a855f7;border-radius:14px;padding:25px}
+.painel.mostrar{display:block}
+.head-adm{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.head-adm h3{color:#f9a8d4}
+.btn-fechar{background:#ef4444;border:none;color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:bold}
+.secao{background:#312e81;padding:15px;border-radius:10px;margin-bottom:15px}
+.secao h4{color:#ddd6fe;margin-bottom:10px}
+.botoes-status{display:flex;gap:10px;margin-bottom:5px}
+.btn-status{padding:10px 20px;border-radius:8px;border:none;font-weight:bold;cursor:pointer}
+.btn-sim{background:#22c55e;color:#fff}
+.btn-nao{background:#4b5563;color:#ddd}
+.btn-ativo{box-shadow:0 0 0 2px #fff}
+.lista-chk{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.lista-chk label{background:#1e1b4b;padding:8px 12px;border-radius:6px;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.9rem}
+
+.fundo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);justify-content:center;align-items:center;padding:20px;z-index:9999}
+.fundo.aberto{display:flex}
+.janela{background:#312e81;border:3px solid#a855f7;border-radius:14px;padding:25px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto}
+.janela h3{margin-bottom:5px}
+.janela-sub{color:#c4b5fd;font-size:.9rem;margin-bottom:15px}
+.aviso-limite{color:#fcd34d;font-size:.85rem;margin-bottom:12px}
+label.block{display:block;margin:15px 0 5px;color:#ddd6fe;font-weight:bold}
+input[type=text], select{width:100%;padding:10px;border-radius:8px;border:2px solid#6366f1;background:#1e1b4b;color:#fff;margin-bottom:10px}
+.grupo{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.grupo label{display:flex;align-items:center;gap:8px;padding:6px;cursor:pointer;border-radius:4px;transition:background .2s}
+.grupo label:hover{background:#4c1d95}
+.grupo label.desativado{opacity:.5;cursor:not-allowed}
+.btns{display:flex;gap:10px;margin-top:15px}
+.btn-canc{flex:1;padding:12px;border:none;border-radius:8px;background:#ef4444;color:#fff;font-weight:bold;cursor:pointer}
+.btn-env{flex:1;padding:12px;border:none;border-radius:8px;background:#22c55e;color:#fff;font-weight:bold;cursor:pointer}
+</style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen">
-    <!-- Header -->
-    <header class="bg-purple-950 border-b border-purple-900 p-4 shadow-md sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="bg-purple-600 rounded-full h-12 w-12 flex items-center justify-center font-bold text-xl">AM</div>
-                <div>
-                    <h1 class="text-xl font-bold">Açaí Mania</h1>
-                    <p class="text-xs text-purple-300">Projetada, 31 - Kiola Sarney</p>
-                </div>
-            </div>
-            <div class="bg-emerald-600 text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1">
-                <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span> Aberto
-            </div>
-        </div>
-    </header>
+<body>
 
-    <!-- Main Container -->
-    <main class="max-w-4xl mx-auto p-4 pb-24">
-        <div class="my-6">
-            <h2 class="text-2xl font-black text-purple-400 mb-1">Nosso Cardápio</h2>
-            <p class="text-sm text-slate-400">Monte seu pedido do seu jeito, sem taxas extras!</p>
-        </div>
-
-        <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- Os produtos entram aqui via JS -->
-        </div>
-    </main>
-
-    <!-- Modal de Montagem / Carrinho -->
-    <div id="modal" class="fixed inset-0 bg-black/80 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-800 border border-slate-700 w-full max-w-lg rounded-2xl p-6 max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="modal-title" class="text-xl font-bold text-purple-400"></h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <p id="modal-desc" class="text-sm text-slate-300 mb-4"></p>
-            
-            <div id="acomp-container" class="mb-6">
-                <label class="block text-sm font-semibold mb-2 text-purple-300">Escolha os Acompanhamentos:</label>
-                <div id="acomp-list" class="grid grid-cols-2 gap-2"></div>
-            </div>
-
-            <div class="border-t border-slate-700 pt-4 space-y-3">
-                <h4 class="font-bold text-sm text-purple-300">Dados para Entrega</h4>
-                <input type="text" id="client-name" placeholder="Seu Nome Completo" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-sm focus:outline-purple-500">
-                <input type="text" id="client-address" placeholder="Endereço (Rua, Número)" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-sm focus:outline-purple-500">
-                <input type="text" id="client-neighborhood" placeholder="Bairro" value="Kiola Sarney / Região" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-sm focus:outline-purple-500">
-                
-                <select id="payment-method" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-sm focus:outline-purple-500">
-                    <option value="Pix">Pix</option>
-                    <option value="Cartão">Cartão (Débito/Crédito)</option>
-                    <option value="Dinheiro">Dinheiro</option>
-                </select>
-                <input type="text" id="change-for" placeholder="Troco para quanto? (Se precisar)" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-sm hidden">
-            </div>
-
-            <div class="mt-6 flex gap-3">
-                <button onclick="closeModal()" class="w-1/2 bg-slate-700 hover:bg-slate-600 py-3 rounded-xl font-bold text-sm">Cancelar</button>
-                <button onclick="sendOrder()" class="w-1/2 bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-lg"></i> Enviar Pedido
-                </button>
-            </div>
-        </div>
+<header>
+  <div class="cab">
+    <div class="esq">
+      <div class="logo">AM</div>
+      <div class="tit">
+        <h1>Açaí Mania</h1>
+        <p>Projetada, 31 - Kiola Sarney</p>
+      </div>
     </div>
+    <div class="dir">
+      <span id="sts" class="status aberto">🟢 Aberto</span>
+      <button class="btn-adm" onclick="loginAdm()">🔒 Admin</button>
+    </div>
+  </div>
+</header>
 
-    <script>
-        let menuData = {};
-        let currentProduct = null;
+<div class="container">
+  <h2>Nosso Cardápio</h2>
+  <p class="sub">Monte seu pedido do seu jeito, sem taxas extras!</p>
+  <div class="grid" id="cardapio"></div>
 
-        fetch('/api/menu')
-            .then(res => res.json())
-            .then(data => {
-                menuData = data;
-                renderProducts();
-            });
+  <div class="painel" id="painel">
+    <div class="head-adm">
+      <h3>⚙️ Painel de Controle</h3>
+      <button class="btn-fechar" onclick="fecharPainel()">✖ Fechar</button>
+    </div>
+    <div class="secao">
+      <h4>Status da Loja</h4>
+      <div class="botoes-status">
+        <button id="botao-abrir" class="btn-status btn-sim btn-ativo" onclick="mudarLoja(true)">🟢 Aberto</button>
+        <button id="botao-fechar" class="btn-status btn-nao" onclick="mudarLoja(false)">🔴 Fechado</button>
+      </div>
+    </div>
+    <div class="secao">
+      <h4>Produtos Disponíveis</h4>
+      <div class="lista-chk" id="lista-prod"></div>
+    </div>
+    <div class="secao">
+      <h4>Acompanhamentos Disponíveis</h4>
+      <div class="lista-chk" id="lista-ing"></div>
+    </div>
+  </div>
+</div>
 
-        function renderProducts() {
-            const list = document.getElementById('product-list');
-            list.innerHTML = '';
-            menuData.products.forEach(p => {
-                list.innerHTML += `
-                    <div class="bg-slate-800 border border-slate-700/60 rounded-2xl p-4 flex flex-col justify-between shadow-lg">
-                        <div>
-                            <span class="text-xs uppercase tracking-wider bg-purple-900/50 text-purple-300 px-2 py-0.5 rounded-md font-semibold">${p.category}</span>
-                            <h3 class="font-bold text-lg mt-2">${p.name}</h3>
-                            <p class="text-xs text-slate-400 mt-1">${p.description}</p>
-                        </div>
-                        <div class="flex justify-between items-center mt-4 pt-3 border-t border-slate-700/40">
-                            <span class="font-black text-emerald-400 text-lg">R$ ${p.price.toFixed(2)}</span>
-                            <button onclick="openModal(${p.id})" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">Montar</button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
+<div class="fundo" id="modal">
+  <div class="janela">
+    <h3 id="m-titulo"></h3>
+    <p class="janela-sub" id="m-sub"></p>
+    <p class="aviso-limite" id="aviso-limite"></p>
+    
+    <label class="block">Escolha os acompanhamentos:</label>
+    <div class="grupo" id="m-ingred"></div>
+    
+    <label class="block">Seu Nome Completo:</label>
+    <input type="text" id="m-nome" placeholder="Ex: João da Silva">
+    
+    <label class="block">Endereço (Rua, Número, Bairro):</label>
+    <input type="text" id="m-endereco" placeholder="Ex: Rua Principal, 123 - Centro">
+    
+    <label class="block">Região / Referência:</label>
+    <input type="text" id="m-regiao" placeholder="Ex: Kiola Sarney">
+    
+    <label class="block">Forma de Pagamento:</label>
+    <select id="m-pagamento">
+      <option value="Dinheiro">Dinheiro</option>
+      <option value="Pix">Pix</option>
+      <option value="Cartão">Cartão</option>
+    </select>
+    
+    <div class="btns">
+      <button class="btn-canc" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-env" onclick="enviar()">Enviar Pedido 🚀</button>
+    </div>
+  </div>
+</div>
 
-        function openModal(id) {
-            currentProduct = menuData.products.find(p => p.id === id);
-            document.getElementById('modal-title').innerText = currentProduct.name;
-            document.getElementById('modal-desc').innerText = currentProduct.description + ` (Escolha até ${currentProduct.max_acomp} adicionais)`;
-            
-            const acompList = document.getElementById('acomp-list');
-            acompList.innerHTML = '';
-            menuData.accompaniments.forEach(a => {
-                acompList.innerHTML += `
-                    <label class="flex items-center space-x-2 text-sm bg-slate-900/50 p-2 rounded-lg border border-slate-700/40 cursor-pointer hover:border-purple-500">
-                        <input type="checkbox" name="acomp" value="${a}" class="rounded text-purple-600 focus:ring-purple-500 h-4 w-4">
-                        <span class="text-slate-300 text-xs">${a}</span>
-                    </label>
-                `;
-            });
+<script>
+const SENHA = "SENHA_AQUI";
+const ZAP = "ZAP_AQUI";
 
-            document.getElementById('modal').classList.remove('hidden');
-        }
+let lojaAberta = true;
+let prodSel = null;
+let selecionados = new Set();
 
-        function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-        }
+const produtos = [
+  {id:1,nome:"Copo Açaí 250ml",tipo:"Copo",preco:10.00,limite:2,desc:"2 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1596890941446-403e6e0b481c?w=400&h=300&fit=crop",ativo:true},
+  {id:2,nome:"Copo Açaí 350ml",tipo:"Copo",preco:12.00,limite:4,desc:"4 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=300&fit=crop",ativo:true},
+  {id:3,nome:"Copo Açaí de 400ml",tipo:"Copo",preco:15.00,limite:5,desc:"5 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1604467794349-0b74285de7e7?w=400&h=300&fit=crop",ativo:true},
+  {id:4,nome:"Copo Açaí 770ml",tipo:"Copo",preco:25.00,limite:7,desc:"7 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop",ativo:true},
+  {id:5,nome:"Combo Supremo",tipo:"Combo",preco:45.00,limite:4,desc:"4 copos de 350ml, 4 acompanhamentos em cada",img:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",ativo:true},
+  {id:6,nome:"Combo Mania",tipo:"Combo",preco:42.00,limite:5,desc:"3 copos de 400ml, 5 acompanhamentos em cada",img:"https://images.unsplash.com/photo-1568702846914-96b305d2db29?w=400&h=300&fit=crop",ativo:true}
+];
 
-        document.getElementById('payment-method').addEventListener('change', (e) => {
-            const changeInput = document.getElementById('change-for');
-            if(e.target.value === 'Dinheiro') {
-                changeInput.classList.remove('hidden');
-            } else {
-                changeInput.classList.add('hidden');
-            }
-        });
+const ingredientes = [
+  {nome:"Leite Condensado",ativo:true},
+  {nome:"Leite em Pó",ativo:true},
+  {nome:"Paçoca",ativo:true},
+  {nome:"Granola",ativo:true},
+  {nome:"Flocos de Arroz",ativo:true},
+  {nome:"Creme de Cupuaçu",ativo:true},
+  {nome:"Banana",ativo:true},
+  {nome:"Morango",ativo:true},
+  {nome:"Chantilly",ativo:true},
+  {nome:"Leite Ninho",ativo:true},
+  {nome:"Ovomaltine",ativo:true},
+  {nome:"Chocobom",ativo:true},
+  {nome:"Gotas de Chocolate",ativo:true}
+];
 
-        function sendOrder() {
-            const name = document.getElementById('client-name').value;
-            const address = document.getElementById('client-address').value;
-            const neighborhood = document.getElementById('client-neighborhood').value;
-            const payment = document.getElementById('payment-method').value;
-            const change = document.getElementById('change-for').value;
+function render(){
+  const grid = document.getElementById("cardapio");
+  grid.innerHTML = "";
+  produtos.filter(p=>p.ativo).forEach(p=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <span class="tipo">${p.tipo}</span>
+      <img src="${p.img}" alt="${p.nome}" class="foto" loading="lazy">
+      <h3>${p.nome}</h3>
+      <p>${p.desc}</p>
+      <div class="foot">
+        <span class="preco">R$ ${p.preco.toFixed(2).replace('.',',')}</span>
+        <button class="btn-montar" onclick="abreModal(${p.id})" ${!lojaAberta?'disabled':''}>
+          ${lojaAberta?'Montar':'Fechado'}
+        </button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
 
-            if(!name || !address) {
-                alert('Por favor, preencha seu nome e endereço de entrega!');
-                return;
-            }
+  const lp = document.getElementById("lista-prod");
+  lp.innerHTML = "";
+  produtos.forEach((p,i)=>{
+    const lbl = document.createElement("label");
+    lbl.innerHTML = `<input type="checkbox" ${p.ativo?'checked':''} onchange="toggleProd(${i})"> ${p.nome}`;
+    lp.appendChild(lbl);
+  });
 
-            const checkboxes = document.querySelectorAll('input[name="acomp"]:checked');
-            const selectedAcomp = Array.from(checkboxes).map(cb => cb.value);
+  const li = document.getElementById("lista-ing");
+  li.innerHTML = "";
+  ingredientes.forEach((ig,i)=>{
+    const lbl = document.createElement("label");
+    lbl.innerHTML = `<input type="checkbox" ${ig.ativo?'checked':''} onchange="toggleIng(${i})"> ${ig.nome}`;
+    li.appendChild(lbl);
+  });
 
-            if(selectedAcomp.length > currentProduct.max_acomp) {
-                alert(`Você pode escolher no máximo ${currentProduct.max_acomp} acompanhamentos para este item.`);
-                return;
-            }
+  const el = document.getElementById("sts");
+  if(lojaAberta){
+    el.className = "status aberto";
+    el.textContent = "🟢 Aberto";
+    document.getElementById("botao-abrir").classList.add("btn-ativo");
+    document.getElementById("botao-fechar").classList.remove("btn-ativo");
+  }else{
+    el.className = "status fechado";
+    el.textContent = "🔴 Fechado";
+    document.getElementById("botao-abrir").classList.remove("btn-ativo");
+    document.getElementById("botao-fechar").classList.add("btn-ativo");
+  }
+}
 
-            let text = `*NOVO PEDIDO - AÇAÍ MANIA* 🍇%0A%0A`;
-            text += `*Item:* ${currentProduct.name} (R$ ${currentProduct.price.toFixed(2)})%0A`;
-            text += `*Acompanhamentos:* ${selectedAcomp.length > 0 ? selectedAcomp.join(', ') : 'Nenhum'}%0A%0A`;
-            text += `*CLIENTE:* ${name}%0A`;
-            text += `*ENDEREÇO:* ${address}, ${neighborhood}%0A`;
-            text += `*PAGAMENTO:* ${payment} ${change ? '(Troco para: R$ ' + change + ')' : ''}%0A%0A`;
-            text += `*TOTAL A PAGAR:* R$ ${currentProduct.price.toFixed(2)}`;
+function loginAdm(){
+  const s = prompt("Senha do Administrador:");
+  if(s===SENHA){
+    document.getElementById("painel").classList.add("mostrar");
+  }else if(s!==null){
+    alert("Senha incorreta!");
+  }
+}
+function fecharPainel(){
+  document.getElementById("painel").classList.remove("mostrar");
+}
+function mudarLoja(abrir){
+  lojaAberta = abrir;
+  render();
+}
+function toggleProd(i){
+  produtos[i].ativo = !produtos[i].ativo;
+  render();
+}
+function toggleIng(i){
+  ingredientes[i].ativo = !ingredientes[i].ativo;
+}
 
-            // Substitua pelo número do WhatsApp do seu irmão (com DDI e DDD, ex: 55989XXXXXXXX)
-            const whatsappNumber = "98 984098706"; 
-            window.open(`https://wa.me/${whatsappNumber}?text=${text}`, '_blank');
-        }
-    </script>
+function abreModal(id){
+  if(!lojaAberta){alert("A loja está fechada no momento!");return;}
+  prodSel = produtos.find(x=>x.id===id);
+  selecionados.clear();
+  
+  document.getElementById("m-titulo").textContent = `${prodSel.nome} - R$ ${prodSel.preco.toFixed(2).replace('.',',')}`;
+  document.getElementById("m-sub").textContent = prodSel.desc;
+  document.getElementById("aviso-limite").textContent = `Escolha até ${prodSel.limite} acompanhamento(s)`;
+  
+  const cont = document.getElementById("m-ingred");
+  cont.innerHTML = "";
+  ingredientes.filter(x=>x.ativo).forEach(ig=>{
+    const lbl = document.createElement("label");
+    lbl.dataset.nome = ig.nome;
+    lbl.innerHTML = `<input type="checkbox" value="${ig.nome}" onchange="atualizarContagem(this, '${ig.nome}')"> ${ig.nome}`;
+    cont.appendChild(lbl);
+  });
+  
+  document.getElementById("modal").classList.add("aberto");
+  document.getElementById("m-nome").value = "";
+  document.getElementById("m-endereco").value = "";
+  document.getElementById("m-regiao").value = "";
+  document.getElementById("m-pagamento").value = "Dinheiro";
+}
+
+function atualizarContagem(checkbox, nome){
+  if(checkbox.checked){
+    if(selecionados.size >= prodSel.limite){
+      checkbox.checked = false;
+      alert(`Limite de ${prodSel.limite} acompanhamento(s) atingido!`);
+      return;
+    }
+    selecionados.add(nome);
+  }else{
+    selecionados.delete(nome);
+  }
+  atualizarBotoesIngredientes();
+}
+
+function atualizarBotoesIngredientes(){
+  const labels = document.querySelectorAll("#m-ingred label");
+  labels.forEach(lbl=>{
+    const cb = lbl.querySelector("input");
+    if(!cb.checked && selecionados.size >= prodSel.limite){
+      lbl.classList.add("desativado");
+      cb.disabled = true;
+    }else{
+      lbl.classList.remove("desativado");
+      cb.disabled = false;
+    }
+  });
+}
+
+function fecharModal(){
+  document.getElementById("modal").classList.remove("aberto");
+  prodSel = null;
+  selecionados.clear();
+}
+
+function enviar(){
+  const nome = document.getElementById("m-nome").value.trim();
+  const endereco = document.getElementById("m-endereco").value.trim();
+  const regiao = document.getElementById("m-regiao").value.trim();
+  const pagamento = document.getElementById("m-pagamento").value;
+  
+  if(!nome || !endereco){
+    alert("Preencha Nome e Endereço!");
+    return;
+  }
+  
+  if(selecionados.size > prodSel.limite){
+    alert(`Você pode escolher no máximo ${prodSel.limite} acompanhamento(s)!`);
+    return;
+  }
+
+  const texto = encodeURIComponent(
+    `🍇 *NOVO PEDIDO - AÇAÍ MANIA*\\n\\n` +
+    `📦 *Produto:* ${prodSel.nome}\\n` +
+    `💰 *Valor:* R$ ${prodSel.preco.toFixed(2).replace('.',',')}\\n` +
+    `🥣 *Acompanhamentos:* ${selecionados.size > 0 ? Array.from(selecionados).join(", ") : "Nenhum"}\\n\\n` +
+    `👤 *Cliente:* ${nome}\\n` +
+    `📍 *Endereço:* ${endereco}\\n` +
+    `🗺️ *Região:* ${regiao || "Não informada"}\\n` +
+    `💳 *Pagamento:* ${pagamento}`
+  );
+  
+  window.open(`https://wa.me/${ZAP}?text=${texto}`, "_blank");
+  fecharModal();
+}
+
+render();
+</script>
 </body>
 </html>
 """
+
+HTML = HTML.replace("SENHA_AQUI", SENHA_ADMIN)
+HTML = HTML.replace("ZAP_AQUI", WHATSAPP)
+
+@app.get("/", response_class=HTMLResponse)
+def principal():
+    return HTML
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
