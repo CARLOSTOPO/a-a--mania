@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
-# DADOS DA LOJA
+# === CONFIGURAÇÕES ===
 WHATSAPP = "5598984098706"
 SENHA_ADMIN = "lima1234"
 
@@ -16,6 +16,7 @@ IMAGENS = {
     "comboSupremo": "https://i.imgur.com/58ips2n.jpeg",
     "comboMania": "https://i.imgur.com/VN4AEQU.jpeg"
 }
+# =====================
 
 HTML = f"""
 <!DOCTYPE html>
