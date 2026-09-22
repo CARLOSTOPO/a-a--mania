@@ -6,9 +6,6 @@ app = FastAPI()
 WHATSAPP = "5598984098706"
 SENHA_ADMIN = "lima1234"
 
-# ==============================================
-# ✅ LINKS DAS IMAGENS — JÁ PREENCHIDOS
-# ==============================================
 IMAGENS = {
     "logo": "https://i.imgur.com/nO8pKAF.jpeg",
     "copo250": "https://i.imgur.com/QAdEt8p.jpeg",
@@ -18,7 +15,6 @@ IMAGENS = {
     "comboSupremo": "https://i.imgur.com/58ips2n.jpeg",
     "comboMania": "https://i.imgur.com/VN4AEQU.jpeg"
 }
-# ==============================================
 
 HTML = f"""
 <!DOCTYPE html>
@@ -55,7 +51,7 @@ h2{{font-size:1.4rem;color:#e9d5ff;margin-bottom:5px;margin-top:40px}}
 .preco{{font-weight:bold;color:#86efac;font-size:1.1rem}}
 .btn-montar{{background:#f472b6;border:none;color:#fff;padding:8px 18px;border-radius:8px;font-weight:bold;cursor:pointer}}
 .btn-montar:disabled{{background:#555;cursor:not-allowed;opacity:.6}}
-.painel{{display:none;margin-top:35px;background:#1e1b4b;border:3px solid#a855f7;border-radius:14px;padding:25px}}
+.painel{{display:none;margin-top:35px;background:#1e1b4b;border:3px solid #a855f7;border-radius:14px;padding:25px}}
 .painel.mostrar{{display:block}}
 .head-adm{{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}}
 .head-adm h3{{color:#f9a8d4}}
@@ -71,12 +67,12 @@ h2{{font-size:1.4rem;color:#e9d5ff;margin-bottom:5px;margin-top:40px}}
 .lista-chk label{{background:#1e1b4b;padding:8px 12px;border-radius:6px;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.9rem}}
 .fundo{{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);justify-content:center;align-items:center;padding:20px;z-index:9999}}
 .fundo.aberto{{display:flex}}
-.janela{{background:#312e81;border:3px solid#a855f7;border-radius:14px;padding:25px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto}}
+.janela{{background:#312e81;border:3px solid #a855f7;border-radius:14px;padding:25px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto}}
 .janela h3{{margin-bottom:5px}}
 .janela-sub{{color:#c4b5fd;font-size:.9rem;margin-bottom:15px}}
 .aviso-limite{{color:#fcd34d;font-size:.85rem;margin-bottom:12px}}
 label.block{{display:block;margin:15px 0 5px;color:#ddd6fe;font-weight:bold}}
-input[type=text], select{{width:100%;padding:10px;border-radius:8px;border:2px solid#6366f1;background:#1e1b4b;color:#fff;margin-bottom:10px}}
+input[type=text], select{{width:100%;padding:10px;border-radius:8px;border:2px solid #6366f1;background:#1e1b4b;color:#fff;margin-bottom:10px}}
 .grupo{{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}}
 .grupo label{{display:flex;align-items:center;gap:8px;padding:6px;cursor:pointer;border-radius:4px;transition:background .2s}}
 .grupo label:hover{{background:#4c1d95}}
@@ -415,9 +411,6 @@ render();
 </body>
 </html>
 """
-
-HTML = HTML.replace("{SENHA_ADMIN}", SENHA_ADMIN)
-HTML = HTML.replace("{WHATSAPP}", WHATSAPP)
 
 @app.get("/", response_class=HTMLResponse)
 def principal():
