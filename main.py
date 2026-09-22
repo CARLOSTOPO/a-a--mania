@@ -34,7 +34,7 @@ h2{font-size:1.4rem;color:#e9d5ff;margin-bottom:5px;margin-top:40px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
 .card{background:linear-gradient(145deg,#312e81,#4c1d95);border-radius:14px;padding:18px}
 .tipo{display:inline-block;background:rgba(255,255,255,.2);padding:3px 10px;border-radius:10px;font-size:.7rem;font-weight:bold;margin-bottom:10px}
-.foto{width:100%;height:140px;object-fit:cover;border-radius:10px;margin-bottom:12px}
+.foto{width:100%;height:160px;object-fit:cover;border-radius:10px;margin-bottom:12px;background:#2a1b5e}
 .card h3{font-size:1rem;margin-bottom:4px}
 .card p{color:#d8b4fe;font-size:.8rem;margin-bottom:12px}
 .foot{display:flex;justify-content:space-between;align-items:center}
@@ -173,12 +173,12 @@ let selecionados = new Set();
 let cremesSel = new Set();
 
 const produtos = [
-  {id:1,nome:"Copo Açaí 250ml",tipo:"Copo",preco:10.00,limite:2,desc:"2 acompanhamentos inclusos",img:"https://p3-flow-image-sign.byteimg.com/tos-cn-i-vig93e2r3a/76fd~tplv-tt-origin.image",ativo:true},
-  {id:2,nome:"Copo Açaí 350ml",tipo:"Copo",preco:12.00,limite:4,desc:"4 acompanhamentos inclusos",img:"https://p3-flow-image-sign.byteimg.com/tos-cn-i-vig93e2r3a/79ad~tplv-tt-origin.image",ativo:true},
-  {id:3,nome:"Copo Açaí de 400ml",tipo:"Copo",preco:15.00,limite:5,desc:"5 acompanhamentos inclusos",img:"https://p3-flow-image-sign.byteimg.com/tos-cn-i-vig93e2r3a/518d~tplv-tt-origin.image",ativo:true},
-  {id:4,nome:"Copo Açaí 770ml",tipo:"Copo",preco:25.00,limite:7,desc:"7 acompanhamentos inclusos",img:"https://p3-flow-image-sign.byteimg.com/tos-cn-i-vig93e2r3a/2785~tplv-tt-origin.image",ativo:true},
-  {id:5,nome:"Combo Supremo",tipo:"Combo",preco:45.00,limite:4,desc:"4 copos de 350ml, 4 acompanhamentos em cada",img:"https://p3-flow-image-sign.byteimg.com/tos-cn-i-vig93e2r3a/05d8~tplv-tt-origin.image",ativo:true},
-  {id:6,nome:"Combo Mania",tipo:"Combo",preco:42.00,limite:5,desc:"3 copos de 400ml, 5 acompanhamentos em cada",img:"https://p3-flow-image-sign.byteimg.com/tos-cn-i-vig93e2r3a/1a96~tplv-tt-origin.image",ativo:true}
+  {id:1,nome:"Copo Açaí 250ml",tipo:"Copo",preco:10.00,limite:2,desc:"2 acompanhamentos inclusos",img:"https://i.imgur.com/KWxQsY9.png",ativo:true},
+  {id:2,nome:"Copo Açaí 350ml",tipo:"Copo",preco:12.00,limite:4,desc:"4 acompanhamentos inclusos",img:"https://i.imgur.com/8pZJkLz.png",ativo:true},
+  {id:3,nome:"Copo Açaí de 400ml",tipo:"Copo",preco:15.00,limite:5,desc:"5 acompanhamentos inclusos",img:"https://i.imgur.com/9sT7qfD.png",ativo:true},
+  {id:4,nome:"Copo Açaí 770ml",tipo:"Copo",preco:25.00,limite:7,desc:"7 acompanhamentos inclusos",img:"https://i.imgur.com/cR9xQ4L.png",ativo:true},
+  {id:5,nome:"Combo Supremo",tipo:"Combo",preco:45.00,limite:4,desc:"4 copos de 350ml, 4 acompanhamentos em cada",img:"https://i.imgur.com/dFzVpQH.png",ativo:true},
+  {id:6,nome:"Combo Mania",tipo:"Combo",preco:42.00,limite:5,desc:"3 copos de 400ml, 5 acompanhamentos em cada",img:"https://i.imgur.com/6qJnXwR.png",ativo:true}
 ];
 
 const acompanhamentos = [
@@ -210,7 +210,7 @@ function render(){
     card.className = "card";
     card.innerHTML = `
       <span class="tipo">${p.tipo}</span>
-      <img src="${p.img}" alt="${p.nome}" class="foto" loading="lazy">
+      <img src="${p.img}" alt="${p.nome}" class="foto" loading="lazy" onerror="this.style.display='none'">
       <h3>${p.nome}</h3>
       <p>${p.desc}</p>
       <div class="foot">
