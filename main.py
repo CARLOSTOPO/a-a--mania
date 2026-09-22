@@ -8,13 +8,13 @@ WHATSAPP = "5598984098706"
 SENHA_ADMIN = "lima1234"
 
 IMAGENS = {
-    "logo": "https://i.imgur.com/nO8pKAF.jpeg",
-    "copo250": "https://i.imgur.com/QAdEt8p.jpeg",
-    "copo350": "https://i.imgur.com/us6ORLD.jpeg",
-    "copo400": "https://i.imgur.com/WQP0p2f.jpeg",
-    "copo770": "https://i.imgur.com/51zouzO.jpeg",
-    "comboSupremo": "https://i.imgur.com/58ips2n.jpeg",
-    "comboMania": "https://i.imgur.com/VN4AEQU.jpeg"
+    "logo": "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=100&h=100&fit=crop",
+    "copo250": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop",
+    "copo350": "https://images.unsplash.com/photo-1505252585898-0a3081d4c161?w=300&h=200&fit=crop",
+    "copo400": "https://images.unsplash.com/photo-1498643668165-7d15c8c4964c?w=300&h=200&fit=crop",
+    "copo770": "https://images.unsplash.com/photo-1571091733220-936303d851d3?w=300&h=200&fit=crop",
+    "comboSupremo": "https://images.unsplash.com/photo-1540480503-6080d1d3d27c?w=300&h=200&fit=crop",
+    "comboMania": "https://images.unsplash.com/photo-1511689660979-10d2b1aada49?w=300&h=200&fit=crop"
 }
 # =====================
 
