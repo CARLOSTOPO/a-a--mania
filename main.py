@@ -7,16 +7,16 @@ WHATSAPP = "5598984098706"
 SENHA_ADMIN = "lima1234"
 
 # ==============================================
-# ✅ LINKS QUE VOCÊ ENVIOU — TUDO AQUI
+# ✅ LINKS DAS IMAGENS — JÁ PREENCHIDOS
 # ==============================================
 IMAGENS = {
-    "logo": "https://i.ibb.co/HTtLGq7q/logo.jpg",
-    "copo250": "https://i.ibb.co/6RZV595y/1-250ml.jpg",
-    "copo350": "https://i.ibb.co/ymc2K9Vr/1-350.jpg",
-    "copo400": "https://i.ibb.co/Y7RNqx0y/3-400ml.jpg",
-    "copo770": "https://i.ibb.co/b5mT4j2Z/770ml.jpg",
-    "comboSupremo": "https://i.ibb.co/vbRBwq1/4-350.jpg",
-    "comboMania": "https://i.ibb.co/rRFvNrTR/400ml.jpg"
+    "logo": "https://i.imgur.com/nO8pKAF.jpeg",
+    "copo250": "https://i.imgur.com/QAdEt8p.jpeg",
+    "copo350": "https://i.imgur.com/us6ORLD.jpeg",
+    "copo400": "https://i.imgur.com/WQP0p2f.jpeg",
+    "copo770": "https://i.imgur.com/51zouzO.jpeg",
+    "comboSupremo": "https://i.imgur.com/58ips2n.jpeg",
+    "comboMania": "https://i.imgur.com/VN4AEQU.jpeg"
 }
 # ==============================================
 
@@ -187,6 +187,7 @@ let selecionados = new Set();
 let cremesSel = new Set();
 
 const imagens = {{
+    logo: "{IMAGENS['logo']}",
     copo250: "{IMAGENS['copo250']}",
     copo350: "{IMAGENS['copo350']}",
     copo400: "{IMAGENS['copo400']}",
