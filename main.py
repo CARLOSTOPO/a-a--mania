@@ -163,14 +163,13 @@ let prodSel = null;
 let selecionados = new Set();
 
 const produtos = [
-  {id:1,nome:"Copo Açaí 250ml",tipo:"Copo",preco:10.00,limite:2,desc:"2 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1596890941446-403e6e0b481c?w=400&h=300&fit=crop",ativo:true},
-  {id:2,nome:"Copo Açaí 350ml",tipo:"Copo",preco:12.00,limite:4,desc:"4 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=300&fit=crop",ativo:true},
-  {id:3,nome:"Copo Açaí de 400ml",tipo:"Copo",preco:15.00,limite:5,desc:"5 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1604467794349-0b74285de7e7?w=400&h=300&fit=crop",ativo:true},
+  {id:1,nome:"Copo Açaí 250ml",tipo:"Copo",preco:10.00,limite:2,desc:"2 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",ativo:true},
+  {id:2,nome:"Copo Açaí 350ml",tipo:"Copo",preco:12.00,limite:4,desc:"4 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1596890941446-403e6e0b481c?w=400&h=300&fit=crop",ativo:true},
+  {id:3,nome:"Copo Açaí de 400ml",tipo:"Copo",preco:15.00,limite:5,desc:"5 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=300&fit=crop",ativo:true},
   {id:4,nome:"Copo Açaí 770ml",tipo:"Copo",preco:25.00,limite:7,desc:"7 acompanhamentos inclusos",img:"https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop",ativo:true},
-  {id:5,nome:"Combo Supremo",tipo:"Combo",preco:45.00,limite:4,desc:"4 copos de 350ml, 4 acompanhamentos em cada",img:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",ativo:true},
+  {id:5,nome:"Combo Supremo",tipo:"Combo",preco:45.00,limite:4,desc:"4 copos de 350ml, 4 acompanhamentos em cada",img:"https://images.unsplash.com/photo-1604467794349-0b74285de7e7?w=400&h=300&fit=crop",ativo:true},
   {id:6,nome:"Combo Mania",tipo:"Combo",preco:42.00,limite:5,desc:"3 copos de 400ml, 5 acompanhamentos em cada",img:"https://images.unsplash.com/photo-1568702846914-96b305d2db29?w=400&h=300&fit=crop",ativo:true}
 ];
-
 const ingredientes = [
   {nome:"Leite Condensado",ativo:true},
   {nome:"Leite em Pó",ativo:true},
